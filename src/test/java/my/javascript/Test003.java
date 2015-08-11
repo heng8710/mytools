@@ -11,7 +11,7 @@ public class Test003 {
 		// TODO Auto-generated method stub
 		Path root = Paths.get( "E:/eclipsews/workspace001/globalsetting/src/main/resources");
 		RelativeFileTraveller t = new RelativeFileTraveller(root, ".js");
-		
+		t.traverseLeaves((path)->{System.out.println(path);});
 	}
 
 }

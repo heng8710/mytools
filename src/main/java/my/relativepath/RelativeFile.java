@@ -139,6 +139,23 @@ public class RelativeFile {
 	}
 
 
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(suffix, path, root);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof RelativeFile) {
+			RelativeFile that = (RelativeFile) object;
+			return Objects.equal(this.suffix, that.suffix)
+					&& Objects.equal(this.path, that.path)
+					&& Objects.equal(this.root, that.root);
+		}
+		return false;
+	}
+
+
 
 
 

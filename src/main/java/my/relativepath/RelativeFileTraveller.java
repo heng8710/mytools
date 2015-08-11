@@ -17,7 +17,8 @@ public class RelativeFileTraveller {
 	public final String suffix;
 	public final Path rootPath;
 	/**
-	 * 有序的，顺序是按路径来排列。深度优先；同级的话，就按照 字符串的顺序来比较
+	 * 有序的，顺序是按路径来排列。深度优先；同级的话，就按照 字符串的顺序来比较。
+	 * 有了这个，就不再需要另外再建立一个关于文件的层次数据结构。
 	 */
 	private final SortedSet<RelativeFile> targetFiles = new TreeSet<>(comparator);
 
@@ -40,7 +41,7 @@ public class RelativeFileTraveller {
 		this.rootPath = realRoot;
 		init0(rootPath);
 		//debug
-		System.out.println(targetFiles);
+//		System.out.println(targetFiles);
 	}
 
 	public Path search(final String relativePath){
@@ -127,8 +128,9 @@ public class RelativeFileTraveller {
 	
 	/**
 	 * 比较器，按目录深度优先（将之是文件名字的名字的字符串比较）
+	 * 因为只限这里用，不需要再判断rootPath、suffix这些是否是真的一样了。
 	 */
-	static final Comparator<RelativeFile> comparator = new Comparator<RelativeFile>(){
+	private static final Comparator<RelativeFile> comparator = new Comparator<RelativeFile>(){
 		@Override
 		public int compare(final RelativeFile o1, final RelativeFile o2) {
 			 return ComparisonChain.start().compare(o2.pathNodeList.size(), o1.pathNodeList.size()).compare(o1.path, o2.path).result();
