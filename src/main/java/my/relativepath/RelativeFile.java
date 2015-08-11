@@ -1,5 +1,6 @@
 package my.relativepath;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,13 +15,20 @@ import com.google.common.io.Files;
 
 /**
  *	快速切换：【相对路径】<---->【绝对路径】
+ *  包含文件夹、和带某种{@link #suffix}后缀的文件
  */
 public class RelativeFile {
 	
 	/**
 	 * 后缀，要带点【.】，比如【.js】
+	 * 如果是目录就没有，用null表示
 	 */
 	public final String suffix;
+	
+	/**
+	 * 是否是叶子节点，这由{@link #filePath}决定，如果是文件就是true，如果是文件夹就是false
+	 */
+	public final boolean isLeaf;
 	
 	/**
 	 * 相对路径，写法类似于android 里面的values引用。【a/b/c】 <br/>
@@ -46,7 +54,9 @@ public class RelativeFile {
 	 * 
 	 */
 	public final Path root;
-
+	
+	
+	
 
 	/**
 	 * @param filePath ： 要代表的文件路径，绝对路径。
@@ -54,10 +64,6 @@ public class RelativeFile {
 	 * @param suffix ：　代表的文件的后缀名
 	 */
 	public RelativeFile(final Path filePath,final Path root, final String suffix) {
-		if(Strings.isNullOrEmpty(suffix) || !suffix.startsWith(".")){
-			throw new IllegalArgumentException(String.format("suffix=[%s] 不正确", suffix));
-		}
-		this.suffix = suffix;
 		if(filePath == null || !filePath.toFile().exists()){
 			throw new IllegalArgumentException(String.format("filePath=[%s] 不存在", filePath));
 		}
@@ -69,13 +75,22 @@ public class RelativeFile {
 		if(!realFilePath.startsWith(realRoot)){
 			throw new IllegalArgumentException(String.format("filePath=[%s] 并不在root=[%s]之下", filePath, root));
 		}
-		if(!realFilePath.toFile().isFile()){
-			throw new IllegalArgumentException(String.format("filePath=[%s] 的文件类型不对", filePath));
+		this.filePath = realFilePath;
+		this.root = realRoot;
+		if(realFilePath.toFile().isDirectory()){
+//			throw new IllegalArgumentException(String.format("filePath=[%s] 的文件类型不对", filePath));
+			this.suffix = null;
+			this.isLeaf = false;
+		}else{
+			if(!realFilePath.toFile().getName().endsWith(suffix)){
+				throw new IllegalArgumentException(String.format("filePath=[%s] 的文件类型可能不对，后缀名不是[%s]", filePath, suffix));
+			}
+			if(Strings.isNullOrEmpty(suffix) || !suffix.startsWith(".")){
+				throw new IllegalArgumentException(String.format("suffix=[%s] 不正确", suffix));
+			}
+			this.suffix = suffix;
+			this.isLeaf = true;
 		}
-		if(!realFilePath.toFile().getName().endsWith(suffix)){
-			throw new IllegalArgumentException(String.format("filePath=[%s] 的文件类型可能不对，后缀名不是[%s]", filePath, suffix));
-		}
-		
 		final LinkedList<Path> list = Lists.newLinkedList();
 		for(Path p=realFilePath; !Objects.equal(realRoot, p) && p.startsWith(realRoot)/*如果一样，也是true*/; p=p.getParent().normalize().toAbsolutePath()){
 			list.addFirst(p);
@@ -84,7 +99,8 @@ public class RelativeFile {
 		final ImmutableList.Builder<String> lb = ImmutableList.builder();
 		for(final Path p: list){
 			if(Objects.equal(realFilePath, p)){
-				final String nameWithoutSuffix = Files.getNameWithoutExtension(p.toFile().getPath());
+				final File f = p.toFile();
+				final String nameWithoutSuffix = (!f.isDirectory())?Files.getNameWithoutExtension(f.getPath()): f.getName();
 				lb.add(nameWithoutSuffix);
 				sb.append(nameWithoutSuffix);
 			}else{
@@ -95,21 +111,11 @@ public class RelativeFile {
 		}
 		this.pathNodeList = lb.build();
 		this.path = sb.toString();
-		this.filePath = realFilePath;
-		this.root = realRoot;
 	}
 
 
 	
 
-
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("suffix", suffix)
-				.add("path", path).add("pathNodeList", pathNodeList)
-				.add("filePath", filePath).add("root", root).toString();
-	}
 
 
 	/* 
@@ -122,6 +128,21 @@ public class RelativeFile {
 //	}
 
 	
+	
+	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("suffix", suffix)
+				.add("isLeaf", isLeaf).add("path", path)
+				.add("pathNodeList", pathNodeList).add("filePath", filePath)
+				.add("root", root).toString();
+	}
+
+
+
+
+
+
 	public static boolean mayBeRelativePath(final String path){
 		if(Objects.equal("", path)){
 			return true;
@@ -131,4 +152,10 @@ public class RelativeFile {
 		}
 		return path.indexOf(":") == -1 && !path.startsWith("/");
 	}
+	
+	
+//	@FunctionalInterface
+//	public static interface Suffix{
+//		public String get();
+//	} 
 }
