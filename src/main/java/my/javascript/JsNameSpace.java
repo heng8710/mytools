@@ -101,6 +101,9 @@ public class JsNameSpace {
 			throw new IllegalArgumentException();
 		}
 		try {
+			//TODO 全局变量的表现？？？？
+			//应该不会与js文件内部的属性相冲突，如果重复了，应该也是读取的内部的属性，而不是全局变量。
+			//不知道还没有没必要给全局变量加一个var
 			String currentName = relativePathNodeList.get(0);
 			if((Boolean)engine.eval(String.format("typeof(%s) == 'undefined'", currentName))){
 				engine.eval(String.format("var %s = {};", currentName));
