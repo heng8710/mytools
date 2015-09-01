@@ -17,7 +17,7 @@ import com.google.common.io.Files;
  *	快速切换：【相对路径】<---->【绝对路径】
  *  包含文件夹、和带某种{@link #suffix}后缀的文件
  */
-public class RelativeFile {
+public class _RelativeFile {
 	
 	/**
 	 * 后缀，要带点【.】，比如【.js】
@@ -63,7 +63,7 @@ public class RelativeFile {
 	 * @param root ：相对于的路径（目录），绝对路径。
 	 * @param suffix ：　代表的文件的后缀名
 	 */
-	public RelativeFile(final Path filePath,final Path root, final String suffix) {
+	public _RelativeFile(final Path filePath,final Path root, final String suffix) {
 		if(filePath == null || !filePath.toFile().exists()){
 			throw new IllegalArgumentException(String.format("filePath=[%s] 不存在", filePath));
 		}

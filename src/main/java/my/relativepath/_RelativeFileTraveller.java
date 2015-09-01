@@ -12,7 +12,7 @@ import com.google.common.collect.ComparisonChain;
 /**
  * 按相对路径搜索
  */
-public class RelativeFileTraveller {
+public class _RelativeFileTraveller {
 
 	public final String suffix;
 	public final Path rootPath;
@@ -26,7 +26,7 @@ public class RelativeFileTraveller {
 	 * @param root 必须是一个目录
 	 * @param suffix 后缀名，例如【.js】
 	 */
-	public RelativeFileTraveller(final Path root, final String suffix) {
+	public _RelativeFileTraveller(final Path root, final String suffix) {
 		if(root == null){
 			throw new IllegalArgumentException("root is null");
 		}

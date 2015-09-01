@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
-public class RelativeFileSearcher_bak {
+public class _RelativeFileSearcher_bak {
 
 	public final String suffix;
 	public final Path rootPath;
@@ -23,7 +23,7 @@ public class RelativeFileSearcher_bak {
 	 * @param root 必须是一个目录
 	 * @param suffix 后缀名，例如【.js】
 	 */
-	public RelativeFileSearcher_bak(final Path root, final String suffix) {
+	public _RelativeFileSearcher_bak(final Path root, final String suffix) {
 		if(root == null){
 			throw new IllegalArgumentException("root is null");
 		}
